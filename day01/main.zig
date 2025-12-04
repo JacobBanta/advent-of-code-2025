@@ -7,18 +7,37 @@ pub fn main() !void {
     while (it.next()) |line| {
         if (line.len == 0) continue;
         if (line[0] == 'R') {
-            for (0..try std.fmt.parseInt(usize, line[1..], 10)) |_| {
-                pos += 1;
-                if (@mod(pos, 100) == 0) count2 += 1;
+            var i = try std.fmt.parseInt(isize, line[1..], 10);
+            while (i > 0) {
+                var change = @min(i, 100 - pos);
+                if (change == 0) change = 100;
+                pos += change;
+                pos = @mod(pos, 100);
+                i -= @intCast(change);
+                if (i == 0) {
+                    if (@mod(pos, 100) == 0) count2 += 1;
+                    break;
+                }
+                count2 += 1;
             }
         }
         if (line[0] == 'L') {
-            for (0..try std.fmt.parseInt(usize, line[1..], 10)) |_| {
-                pos -= 1;
-                if (@mod(pos, 100) == 0) count2 += 1;
+            var i = try std.fmt.parseInt(isize, line[1..], 10);
+            while (i > 0) {
+                var change = @min(i, pos);
+                if (change == 0) change = @min(100, i);
+                pos -= change;
+                pos = @mod(pos, 100);
+                i -= @intCast(change);
+                if (i == 0) {
+                    if (@mod(pos, 100) == 0) count2 += 1;
+                    break;
+                }
+                count2 += 1;
             }
         }
         if (@mod(pos, 100) == 0) count += 1;
+        pos = @mod(pos, 100);
     }
     std.debug.print("part 1: {d}\n", .{count});
     std.debug.print("part 2: {d}\n", .{count2});
