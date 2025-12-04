@@ -36,3 +36,12 @@ Running the time step will use `hyperfine` to time each day's solution. I will t
 ```bash
 zig build -Doptimize=ReleaseFast time
 ```
+## Speed
+These are the speeds on my laptop.
+|day|Time (mean ± σ)|Range (min … max)|
+|-|-|-|
+|1|285.8 µs ± 79.7 µs|147.4 µs … 1476.6 µs|
+|2|355.2 µs ± 92.7 µs|190.6 µs … 1679.4 µs|
+|3|218.9 µs ± 69.3 µs|130.3 µs … 1495.9 µs|
+|4|644.4 µs ± 181.6 µs|350.2 µs … 2345.4 µs|
+
