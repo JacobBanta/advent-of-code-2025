@@ -7,6 +7,9 @@ pub fn main() !void {
     while (it.next()) |line| {
         if (line.len == 0) continue;
         if (line[0] == 'R') {
+            // The general idea here is to calculate how
+            // many turns it will take to get to the next 0.
+            // This is not optimal, but it is fast enough.
             var i = try std.fmt.parseInt(isize, line[1..], 10);
             while (i > 0) {
                 var change = @min(i, 100 - pos);
