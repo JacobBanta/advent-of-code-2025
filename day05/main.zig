@@ -13,32 +13,20 @@ pub fn main() !void {
             .max = try std.fmt.parseInt(usize, it2.next().?, 10),
         });
     }
-    var count: usize = 0;
-    while (it.next()) |food| {
-        if (food.len == 0) break;
-        const id = try std.fmt.parseInt(usize, food, 10);
-        for (ranges.items) |range| {
-            if (id >= range.min and id <= range.max) {
-                count += 1;
-                break;
-            }
-        }
-    }
-    std.debug.print("part 1: {d}\n", .{count});
-    // Once you sort the ranges, it becomes much easier to combine them.
-    // I should probably put this a higher up to make part 1 faster.
     std.mem.sort(Range, ranges.items, {}, struct {
         pub fn inner(_: void, a: Range, b: Range) bool {
             return a.min < b.min;
         }
     }.inner);
-    count = 0;
+    var count2: usize = 0;
+    var newRanges = std.ArrayList(Range).empty;
     var index: usize = 1;
     var min = ranges.items[0].min;
     var max = ranges.items[0].max;
     while (index < ranges.items.len) : (index += 1) {
         if (ranges.items[index].min > max + 1) {
-            count += max - min + 1;
+            count2 += max - min + 1;
+            try newRanges.append(allocator, .{ .min = min, .max = max });
             min = ranges.items[index].min;
             max = ranges.items[index].max;
             continue;
@@ -47,6 +35,22 @@ pub fn main() !void {
             max = ranges.items[index].max;
         }
     }
-    count += max - min + 1;
-    std.debug.print("part 2: {d}\n", .{count});
+    count2 += max - min + 1;
+    try newRanges.append(allocator, .{ .min = min, .max = max });
+    var count: usize = 0;
+    while (it.next()) |food| {
+        if (food.len == 0) break;
+        const id = try std.fmt.parseInt(usize, food, 10);
+        if (std.sort.binarySearch(Range, newRanges.items, id, struct {
+            pub fn inner(i: usize, a: Range) std.math.Order {
+                if (i > a.max) return .gt;
+                if (i < a.min) return .lt;
+                return .eq;
+            }
+        }.inner) != null) {
+            count += 1;
+        }
+    }
+    std.debug.print("part 1: {d}\n", .{count});
+    std.debug.print("part 2: {d}\n", .{count2});
 }
