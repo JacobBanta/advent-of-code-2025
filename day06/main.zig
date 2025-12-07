@@ -16,21 +16,24 @@ pub fn main() !void {
         var math: usize = 0;
         if (operator[0] == '+') {
             for (0..lines - 1) |x| {
+                // Not all of the numbers start/end in the same position,
+                // so i need to find the bounds of each number.
                 const startIndex = std.mem.indexOfAnyPos(u8, numbers[x], index - 2, "123456789").?;
                 math += std.fmt.parseInt(usize, numbers[x][startIndex .. std.mem.indexOfScalarPos(u8, numbers[x], startIndex, ' ') orelse lineLen - 1], 10) catch 0;
             }
-        }
-        if (operator[0] == '*') {
+        } else if (operator[0] == '*') {
             math += 1;
             for (0..lines - 1) |x| {
                 const startIndex = std.mem.indexOfAnyPos(u8, numbers[x], index - 2, "123456789").?;
                 math *= std.fmt.parseInt(usize, numbers[x][startIndex .. std.mem.indexOfScalarPos(u8, numbers[x], startIndex, ' ') orelse lineLen - 1], 10) catch 1;
             }
-        }
+        } else unreachable;
         count += math;
     }
     std.debug.print("part 1: {d}\n", .{count});
     count = 0;
+    // Cephalopod math being read right to left is a red herring.
+    // I just solved it left to right.
     operatorIterator.reset();
     while (operatorIterator.next()) |operator| {
         if (operator.len == 0) continue;

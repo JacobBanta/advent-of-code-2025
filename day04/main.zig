@@ -2,6 +2,8 @@ const std = @import("std");
 pub fn main() !void {
     const rawinput = @embedFile("input.txt");
     const lineLen = std.mem.indexOfScalar(u8, rawinput, '\n').? + 1;
+    // If we pad an extra row to the  top and bottom,
+    // it eliminates the need for bounds checking.
     var padded = try std.ArrayList(u8).initCapacity(std.heap.page_allocator, rawinput.len + lineLen * 2);
     padded.appendNTimesAssumeCapacity('\n', lineLen);
     padded.appendSliceAssumeCapacity(rawinput);
@@ -44,40 +46,41 @@ pub fn main() !void {
         if (neighbors[index] < 4) {
             count += 1;
             neighbors[index] = 64;
-            var nindex = index;
+            // nextIndex ends up being the index of the last neighbor that needs to update
+            var nextIndex = index;
             neighbors[index + lineLen + 1] -= 1;
             if (neighbors[index + lineLen + 1] < 4) {
-                nindex = index + lineLen + 1;
+                nextIndex = index + lineLen + 1;
             }
             neighbors[index + lineLen] -= 1;
             if (neighbors[index + lineLen] < 4) {
-                nindex = index + lineLen;
+                nextIndex = index + lineLen;
             }
             neighbors[index + lineLen - 1] -= 1;
             if (neighbors[index + lineLen - 1] < 4) {
-                nindex = index + lineLen - 1;
+                nextIndex = index + lineLen - 1;
             }
             neighbors[index + 1] -= 1;
             if (neighbors[index + 1] < 4) {
-                nindex = index + 1;
+                nextIndex = index + 1;
             }
             neighbors[index - 1] -= 1;
             if (neighbors[index - 1] < 4) {
-                nindex = index - 1;
+                nextIndex = index - 1;
             }
             neighbors[index - lineLen + 1] -= 1;
             if (neighbors[index - lineLen + 1] < 4) {
-                nindex = index - lineLen + 1;
+                nextIndex = index - lineLen + 1;
             }
             neighbors[index - lineLen] -= 1;
             if (neighbors[index - lineLen] < 4) {
-                nindex = index - lineLen;
+                nextIndex = index - lineLen;
             }
             neighbors[index - lineLen - 1] -= 1;
             if (neighbors[index - lineLen - 1] < 4) {
-                nindex = index - lineLen - 1;
+                nextIndex = index - lineLen - 1;
             }
-            index = @min(index, nindex) - 1;
+            index = @min(index, nextIndex - 1);
         }
         index += 1;
     }

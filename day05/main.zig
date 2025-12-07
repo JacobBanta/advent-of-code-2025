@@ -25,6 +25,8 @@ pub fn main() !void {
         }
     }
     std.debug.print("part 1: {d}\n", .{count});
+    // Once you sort the ranges, it becomes much easier to combine them.
+    // I should probably put this a higher up to make part 1 faster.
     std.mem.sort(Range, ranges.items, {}, struct {
         pub fn inner(_: void, a: Range, b: Range) bool {
             return a.min < b.min;
