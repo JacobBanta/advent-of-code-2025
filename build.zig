@@ -10,6 +10,7 @@ pub fn build(b: *std.Build) void {
         "04",
         "05",
         "06",
+        "07",
     };
     const cmd = b.addSystemCommand(&.{ "hyperfine", "-N" });
     if (optimize != .Debug) {
